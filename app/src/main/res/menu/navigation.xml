@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/navigation_home"
+        android:title="Home"
+        android:icon="@drawable/ic_home_black_24dp"/>
+    <item
+        android:id="@+id/navigation_rewards"
+        android:title="Rewards"
+        android:icon="@drawable/ic_trophy"/>
+    <item
+        android:id="@+id/navigation_near_me"
+        android:title="Near Me"
+        android:icon="@drawable/ic_near_me_black_24dp"/>
+    <item
+        android:id="@+id/navigation_alerts"
+        android:title="Reports"
+        android:icon="@drawable/ic_bell_alert"/>
+</menu>

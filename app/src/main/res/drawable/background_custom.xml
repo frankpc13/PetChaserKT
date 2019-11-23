@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- drawable/union.xml -->
+<vector
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
+    android:width="176.76dp"
+    android:height="176.76dp"
+    android:viewportWidth="176.76"
+    android:viewportHeight="176.76"
+    >
+
+    <group>
+
+        <clip-path
+            android:pathData="M0 0H176.755V176.755H0V0Z"
+            />
+
+        <path
+            android:pathData="M0 0V176.755H176.755V0"
+            android:fillColor="#FF8D36"
+            />
+
+    </group>
+
+</vector>
+
