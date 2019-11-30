@@ -1,16 +1,19 @@
 package com.shibuyaxpress.petchaserkt.components
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.shibuyaxpress.petchaserkt.ProfileActivity
 import com.shibuyaxpress.petchaserkt.R
 import com.shibuyaxpress.petchaserkt.components.fragments.HomeFragment
 import com.shibuyaxpress.petchaserkt.components.fragments.LocationFragment
 import com.shibuyaxpress.petchaserkt.components.fragments.ReportFragment
 import com.shibuyaxpress.petchaserkt.components.fragments.RewardFragment
+import kotlinx.android.synthetic.main.activity_menu.*
 
 class MenuActivity : AppCompatActivity() {
 
@@ -22,31 +25,36 @@ class MenuActivity : AppCompatActivity() {
         toolbar  = findViewById(R.id.toolbar)
         val bottomNavigationBar: BottomNavigationView = findViewById(R.id.navigation)
         bottomNavigationBar.setOnNavigationItemSelectedListener(navigationItemSelectedListener)
+        openFragment(HomeFragment.newInstance())
+        textBar.text = "Inicio"
+        imageProfile.setOnClickListener {
+            startActivity(Intent(this@MenuActivity, ProfileActivity::class.java))
+        }
     }
 
     private val navigationItemSelectedListener = BottomNavigationView.OnNavigationItemSelectedListener {
         item ->
         when(item.itemId){
             R.id.navigation_home -> {
-                toolbar.title = "Inicio"
+                textBar.text = "Inicio"
                 val homeFragment = HomeFragment.newInstance()
                 openFragment(homeFragment)
                 return@OnNavigationItemSelectedListener true
             }
             R.id.navigation_alerts -> {
-                toolbar.title = "Reportes"
+                textBar.text = "Reportes"
                 val reportFragment = ReportFragment.newInstance()
                 openFragment(reportFragment)
                 return@OnNavigationItemSelectedListener true
             }
             R.id.navigation_near_me -> {
-                toolbar.title = "Cerca de mi"
+                textBar.text = "Cerca de mi"
                 val locationFragment = LocationFragment.newInstance()
                 openFragment(locationFragment)
                 return@OnNavigationItemSelectedListener true
             }
             R.id.navigation_rewards -> {
-                toolbar.title = "Recompensas"
+                textBar.text = "Recompensas"
                 val rewardFragment = RewardFragment.newInstance()
                 openFragment(rewardFragment)
                 return@OnNavigationItemSelectedListener true

@@ -3,6 +3,7 @@ package com.shibuyaxpress.petchaserkt.network
 import kotlinx.coroutines.Deferred
 import retrofit2.Response
 import retrofit2.http.GET
+import retrofit2.http.POST
 
 interface PetChaserAPI {
 
@@ -16,4 +17,6 @@ interface PetChaserAPI {
     @GET("reward")
     fun getRewardsAsync() : Deferred<Response<DataResponseReward>>
 
+    @POST("login")
+    fun LoginUserAsync() : Deferred<Response<DataResponseLogin>>
 }
