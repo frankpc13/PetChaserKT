@@ -2,10 +2,15 @@ package com.shibuyaxpress.petchaserkt.components
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.MenuItem
 import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
+import androidx.navigation.NavController
+import androidx.navigation.Navigation
+import androidx.navigation.ui.NavigationUI
+import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.shibuyaxpress.petchaserkt.ProfileActivity
 import com.shibuyaxpress.petchaserkt.R
@@ -18,18 +23,41 @@ import kotlinx.android.synthetic.main.activity_menu.*
 class MenuActivity : AppCompatActivity() {
 
     lateinit var toolbar: Toolbar
+    private lateinit var navController:NavController
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_menu)
         toolbar  = findViewById(R.id.toolbar)
         val bottomNavigationBar: BottomNavigationView = findViewById(R.id.navigation)
-        bottomNavigationBar.setOnNavigationItemSelectedListener(navigationItemSelectedListener)
-        openFragment(HomeFragment.newInstance())
-        textBar.text = "Inicio"
+        //bottomNavigationBar.setOnNavigationItemSelectedListener(navigationItemSelectedListener)
+        //openFragment(HomeFragment.newInstance())
+        //textBar.text = "Inicio"
+
         imageProfile.setOnClickListener {
             startActivity(Intent(this@MenuActivity, ProfileActivity::class.java))
         }
+
+        //getting the navigation controller
+        navController = Navigation.findNavController(this,R.id.fragment)
+        //setting the navigation controller to bottom nav
+        bottomNavigationBar.setupWithNavController(navController)
+        //setting up the action bar
+        //NavigationUI.setupActionBarWithNavController(this,navController)
+    }
+
+    override fun onSupportNavigateUp(): Boolean {
+        return NavigationUI.navigateUp(navController, null)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when(item.itemId) {
+            android.R.id.home-> {
+                supportFinishAfterTransition()
+                return true
+            }
+        }
+        return super.onOptionsItemSelected(item)
     }
 
     private val navigationItemSelectedListener = BottomNavigationView.OnNavigationItemSelectedListener {

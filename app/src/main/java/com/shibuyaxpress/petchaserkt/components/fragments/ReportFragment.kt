@@ -7,6 +7,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.app.ActivityOptionsCompat
+import androidx.core.util.Pair
+import androidx.core.view.ViewCompat
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -16,10 +19,11 @@ import com.shibuyaxpress.petchaserkt.components.recyclerview.OnItemClickListener
 import com.shibuyaxpress.petchaserkt.components.recyclerview.ReportAdapter
 import com.shibuyaxpress.petchaserkt.models.Report
 import com.shibuyaxpress.petchaserkt.network.APIServiceGenerator
+import kotlinx.android.synthetic.main.card_item_report.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import java.lang.Exception
+
 
 class ReportFragment : Fragment(), OnItemClickListener {
 
@@ -48,10 +52,17 @@ class ReportFragment : Fragment(), OnItemClickListener {
 
     override fun onItemClicked(item: Any) {
         //Toast.makeText(activity!!.applicationContext, "$item",Toast.LENGTH_SHORT).show()
+        var report = item as Report
         activity.let {
-            startActivity(Intent(activity,
+            //ViewCompat.setTransitionName()
+            //val options = ActivityOptionsCompat.makeSceneTransitionAnimation(activity!!,imageReport,"imagenPerro")
+            val p1 : Pair<View,String> = Pair.create(imageReport, report.pet!!.image)
+            val p2 : Pair<View,String> = Pair.create(nameReport, report.pet!!.name)
+            val options = ActivityOptionsCompat.makeSceneTransitionAnimation(activity!!, p1,p2)
+            val intent = Intent(activity,
                 ReportDetailActivity::class.java)
-                .putExtra("reportSelected",item as Report))
+                .putExtra("reportSelected",report)
+            startActivity(intent,options.toBundle())
         }
     }
 

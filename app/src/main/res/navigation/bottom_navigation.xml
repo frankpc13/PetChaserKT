@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/bottom_navigation"
+    app:startDestination="@id/navigation_home">
+
+    <fragment
+        android:id="@+id/navigation_home"
+        android:name="com.shibuyaxpress.petchaserkt.components.fragments.HomeFragment"
+        android:label="HomeFragment" />
+    <fragment
+        android:id="@+id/navigation_rewards"
+        android:name="com.shibuyaxpress.petchaserkt.components.fragments.RewardFragment"
+        android:label="RewardFragment" >
+        <action
+            android:id="@+id/action_navigation_rewards_to_rewardDetailActivity"
+            app:destination="@id/rewardDetailActivity"
+            app:enterAnim="@anim/nav_default_pop_enter_anim"
+            app:exitAnim="@anim/nav_default_pop_exit_anim" />
+    </fragment>
+    <fragment
+        android:id="@+id/navigation_near_me"
+        android:name="com.shibuyaxpress.petchaserkt.components.fragments.LocationFragment"
+        android:label="LocationFragment" />
+    <fragment
+        android:id="@+id/navigation_alerts"
+        android:name="com.shibuyaxpress.petchaserkt.components.fragments.ReportFragment"
+        android:label="ReportFragment" />
+    <activity
+        android:id="@+id/rewardDetailActivity"
+        android:name="com.shibuyaxpress.petchaserkt.RewardDetailActivity"
+        android:label="activity_reward_detail"
+        tools:layout="@layout/activity_reward_detail" />
+</navigation>

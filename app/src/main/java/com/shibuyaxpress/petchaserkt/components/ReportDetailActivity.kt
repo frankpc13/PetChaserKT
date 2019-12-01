@@ -64,6 +64,8 @@ class ReportDetailActivity : AppCompatActivity(){
         GlideApp.with(this).load(report.pet!!.image)
             .apply(RequestOptions.circleCropTransform()).into(imagePet)
         descriptionReport.text = report.description
+        imagePet.transitionName = report.pet!!.image
+        petName.transitionName = report.pet!!.name
     }
 
     private fun addMarkers(report: Report?, loadedMapStyle:Style) {

@@ -51,7 +51,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/imageReport"
                 app:layout_constraintTop_toTopOf="parent"
-                tools:text="Kotoha Tanaka" />
+                tools:text="Kotoha Tanaka"/>
 
             <TextView
                 android:id="@+id/textView2"
