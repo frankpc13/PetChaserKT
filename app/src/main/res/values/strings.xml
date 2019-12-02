@@ -1,4 +1,8 @@
 <resources>
     <string name="app_name">PetChaserKT</string>
     <string name="map_box_key">pk.eyJ1IjoibWlzYWtpMTMiLCJhIjoiY2szNnlqODhlMDZ2dDNkcGF3cHR6NHk3ZiJ9.0Znh7hpvBm8XWRxXK2YN5A</string>
+    <string name="facebook_app_id">2478854702437064</string>
+    <string name="fb_login_protocol_scheme">fb2478854702437064</string>
+
+
 </resources>

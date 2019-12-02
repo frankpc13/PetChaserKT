@@ -14,6 +14,7 @@ import com.mapbox.mapboxsdk.Mapbox
 import com.mapbox.mapboxsdk.camera.CameraPosition
 import com.mapbox.mapboxsdk.location.LocationComponentActivationOptions
 import com.mapbox.mapboxsdk.location.LocationComponentOptions
+import com.mapbox.mapboxsdk.location.OnCameraTrackingChangedListener
 import com.mapbox.mapboxsdk.location.modes.CameraMode
 import com.mapbox.mapboxsdk.location.modes.RenderMode
 import com.mapbox.mapboxsdk.maps.MapView
@@ -21,12 +22,14 @@ import com.mapbox.mapboxsdk.maps.MapboxMap
 import com.mapbox.mapboxsdk.maps.OnMapReadyCallback
 import com.mapbox.mapboxsdk.maps.Style
 import com.shibuyaxpress.petchaserkt.R
+import kotlinx.android.synthetic.main.fragment_chaser.*
 
-class LocationFragment : Fragment(), OnMapReadyCallback, PermissionsListener {
+class LocationFragment : Fragment(), OnMapReadyCallback, PermissionsListener, OnCameraTrackingChangedListener {
 
     private var permissionManager = PermissionsManager(this)
     private lateinit var mapViewChaser: MapView
     private lateinit var mapboxMap: MapboxMap
+    private var isInTrackingMode: Boolean = false
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
@@ -44,6 +47,7 @@ class LocationFragment : Fragment(), OnMapReadyCallback, PermissionsListener {
             enableLocationComponent(it)
         }
     }
+
     @SuppressLint("MissingPermission")
     private fun enableLocationComponent(loadedMapStyle: Style) {
         if (PermissionsManager.areLocationPermissionsGranted(context!!.applicationContext)) {
@@ -63,6 +67,17 @@ class LocationFragment : Fragment(), OnMapReadyCallback, PermissionsListener {
                 isLocationComponentEnabled = true
                 cameraMode = CameraMode.TRACKING
                 renderMode = RenderMode.COMPASS
+                addOnCameraTrackingChangedListener(this@LocationFragment)
+            }
+            back_to_camera_tracking_mode.setOnClickListener {
+                if (!isInTrackingMode) {
+                    isInTrackingMode = true
+                    mapboxMap.locationComponent.cameraMode = CameraMode.TRACKING
+                    mapboxMap.locationComponent.zoomWhileTracking(16.0)
+                    Toast.makeText(activity,"Se activo el tracking", Toast.LENGTH_SHORT).show()
+                } else {
+                    Toast.makeText(activity, "El tracking ya esta activado", Toast.LENGTH_SHORT).show()
+                }
             }
         } else {
             permissionManager = PermissionsManager(this)
@@ -137,5 +152,13 @@ class LocationFragment : Fragment(), OnMapReadyCallback, PermissionsListener {
 
     companion object {
         fun newInstance():LocationFragment = LocationFragment()
+    }
+
+    override fun onCameraTrackingChanged(currentMode: Int) {
+
+    }
+
+    override fun onCameraTrackingDismissed() {
+        isInTrackingMode = false
     }
 }

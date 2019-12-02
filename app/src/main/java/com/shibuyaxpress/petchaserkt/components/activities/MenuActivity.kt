@@ -1,18 +1,14 @@
-package com.shibuyaxpress.petchaserkt.components
+package com.shibuyaxpress.petchaserkt.components.activities
 
 import android.content.Intent
 import android.os.Bundle
 import android.view.MenuItem
-import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
-import androidx.navigation.Navigation
 import androidx.navigation.ui.NavigationUI
-import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import com.shibuyaxpress.petchaserkt.ProfileActivity
 import com.shibuyaxpress.petchaserkt.R
 import com.shibuyaxpress.petchaserkt.components.fragments.HomeFragment
 import com.shibuyaxpress.petchaserkt.components.fragments.LocationFragment
@@ -22,7 +18,7 @@ import kotlinx.android.synthetic.main.activity_menu.*
 
 class MenuActivity : AppCompatActivity() {
 
-    lateinit var toolbar: Toolbar
+    private lateinit var toolbar: Toolbar
     private lateinit var navController:NavController
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -30,18 +26,19 @@ class MenuActivity : AppCompatActivity() {
         setContentView(R.layout.activity_menu)
         toolbar  = findViewById(R.id.toolbar)
         val bottomNavigationBar: BottomNavigationView = findViewById(R.id.navigation)
-        //bottomNavigationBar.setOnNavigationItemSelectedListener(navigationItemSelectedListener)
-        //openFragment(HomeFragment.newInstance())
-        //textBar.text = "Inicio"
+        bottomNavigationBar.setOnNavigationItemSelectedListener(navigationItemSelectedListener)
+        openFragment(HomeFragment.newInstance())
+        textBar.text = "Inicio"
 
         imageProfile.setOnClickListener {
             startActivity(Intent(this@MenuActivity, ProfileActivity::class.java))
         }
 
+        //navigation style
         //getting the navigation controller
-        navController = Navigation.findNavController(this,R.id.fragment)
+        //navController = Navigation.findNavController(this,R.id.fragment)
         //setting the navigation controller to bottom nav
-        bottomNavigationBar.setupWithNavController(navController)
+        //bottomNavigationBar.setupWithNavController(navController)
         //setting up the action bar
         //NavigationUI.setupActionBarWithNavController(this,navController)
     }

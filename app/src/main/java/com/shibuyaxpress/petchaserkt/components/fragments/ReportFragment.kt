@@ -9,12 +9,11 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.app.ActivityOptionsCompat
 import androidx.core.util.Pair
-import androidx.core.view.ViewCompat
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.shibuyaxpress.petchaserkt.R
-import com.shibuyaxpress.petchaserkt.components.ReportDetailActivity
+import com.shibuyaxpress.petchaserkt.components.activities.ReportDetailActivity
 import com.shibuyaxpress.petchaserkt.components.recyclerview.OnItemClickListener
 import com.shibuyaxpress.petchaserkt.components.recyclerview.ReportAdapter
 import com.shibuyaxpress.petchaserkt.models.Report

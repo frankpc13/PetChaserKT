@@ -29,7 +29,7 @@
         android:label="ReportFragment" />
     <activity
         android:id="@+id/rewardDetailActivity"
-        android:name="com.shibuyaxpress.petchaserkt.RewardDetailActivity"
+        android:name="com.shibuyaxpress.petchaserkt.components.activities.RewardDetailActivity"
         android:label="activity_reward_detail"
         tools:layout="@layout/activity_reward_detail" />
 </navigation>

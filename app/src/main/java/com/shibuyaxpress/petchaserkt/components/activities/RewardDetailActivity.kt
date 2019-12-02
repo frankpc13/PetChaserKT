@@ -1,7 +1,8 @@
-package com.shibuyaxpress.petchaserkt
+package com.shibuyaxpress.petchaserkt.components.activities
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import com.shibuyaxpress.petchaserkt.R
 
 class RewardDetailActivity : AppCompatActivity() {
 

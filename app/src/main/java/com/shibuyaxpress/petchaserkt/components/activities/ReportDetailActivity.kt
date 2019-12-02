@@ -1,4 +1,4 @@
-package com.shibuyaxpress.petchaserkt.components
+package com.shibuyaxpress.petchaserkt.components.activities
 
 import android.graphics.BitmapFactory
 import android.graphics.Color

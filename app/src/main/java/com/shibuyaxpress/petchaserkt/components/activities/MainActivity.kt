@@ -1,4 +1,4 @@
-package com.shibuyaxpress.petchaserkt.components
+package com.shibuyaxpress.petchaserkt.components.activities
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle

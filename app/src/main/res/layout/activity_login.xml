@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#FF8D36"
-    tools:context=".components.LoginActivity">
+    tools:context=".components.activities.LoginActivity">
 
     <TextView
         android:id="@+id/textView4"
@@ -36,7 +36,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/ic_petchaser" />
 
-    <com.google.android.material.button.MaterialButton
+    <com.facebook.login.widget.LoginButton
         android:id="@+id/btnFacebookLogin"
         style="@style/Widget.AppCompat.Button.Colored"
         android:layout_width="0dp"
@@ -61,7 +61,7 @@
         app:layout_constraintTop_toBottomOf="@+id/textView4" />
 
     <com.google.android.material.button.MaterialButton
-        android:id="@+id/button2"
+        android:id="@+id/btnGoogleLogin"
         style="@style/Widget.AppCompat.Button.Colored"
         android:layout_width="0dp"
         android:layout_height="64dp"
@@ -76,7 +76,7 @@
         android:textColor="#6D7278"
         android:textStyle="bold"
         android:typeface="sans"
-        app:cornerRadius="32dp"
+        app:cornerRadius="8dp"
         app:icon="@drawable/ic_google"
         app:iconGravity="start"
         app:iconSize="24dp"
