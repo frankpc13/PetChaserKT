@@ -103,6 +103,7 @@ class ReportDetailActivity : AppCompatActivity(){
                     .withDraggable(false)
                     .withCircleStrokeColor(ColorUtils.colorToRgbaString(Color.WHITE))
                 //circleManager.create(circleOptions)
+                //here we add the marker to the coordinates of the report
                 it.addMarker(MarkerOptions().position(LatLng(report.latitude!!,report.longitude!!)).title("ME PERDI"))
                 style
                     .addImage(MARKER_IMAGE, BitmapFactory

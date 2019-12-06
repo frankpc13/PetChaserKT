@@ -1,21 +1,34 @@
 package com.shibuyaxpress.petchaserkt.components.fragments
 
 import android.annotation.SuppressLint
+import android.graphics.Bitmap
+import android.graphics.Canvas
+import android.graphics.Color
+import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import com.bumptech.glide.load.DataSource
+import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.bumptech.glide.request.RequestListener
+import com.bumptech.glide.request.RequestOptions
+import com.bumptech.glide.request.target.Target
 import com.mapbox.android.core.permissions.PermissionsListener
 import com.mapbox.android.core.permissions.PermissionsManager
 import com.mapbox.geojson.Feature
 import com.mapbox.geojson.FeatureCollection
 import com.mapbox.geojson.Point
 import com.mapbox.mapboxsdk.Mapbox
+import com.mapbox.mapboxsdk.annotations.IconFactory
+import com.mapbox.mapboxsdk.annotations.MarkerOptions
 import com.mapbox.mapboxsdk.camera.CameraPosition
+import com.mapbox.mapboxsdk.geometry.LatLng
 import com.mapbox.mapboxsdk.location.LocationComponentActivationOptions
 import com.mapbox.mapboxsdk.location.LocationComponentOptions
 import com.mapbox.mapboxsdk.location.OnCameraTrackingChangedListener
@@ -25,11 +38,13 @@ import com.mapbox.mapboxsdk.maps.MapView
 import com.mapbox.mapboxsdk.maps.MapboxMap
 import com.mapbox.mapboxsdk.maps.OnMapReadyCallback
 import com.mapbox.mapboxsdk.maps.Style
+import com.mapbox.mapboxsdk.plugins.annotation.SymbolOptions
 import com.mapbox.mapboxsdk.style.layers.PropertyFactory
 import com.mapbox.mapboxsdk.style.layers.SymbolLayer
 import com.mapbox.mapboxsdk.style.sources.GeoJsonSource
 import com.shibuyaxpress.petchaserkt.R
 import com.shibuyaxpress.petchaserkt.models.Report
+import com.shibuyaxpress.petchaserkt.modules.GlideApp
 import com.shibuyaxpress.petchaserkt.network.APIServiceGenerator
 import kotlinx.android.synthetic.main.fragment_chaser.*
 import kotlinx.coroutines.Dispatchers
@@ -64,6 +79,24 @@ class LocationFragment : Fragment(), OnMapReadyCallback, PermissionsListener, On
         }
     }
 
+    private fun imageFromView(image: String) : Bitmap {
+        var inflatedView = layoutInflater.inflate(R.layout.marker_pet_report, null)
+        var imagePet = inflatedView.findViewById<ImageView>(R.id.imageMarkerPet)
+        val measureSpec  = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED)
+        inflatedView.measure(measureSpec, measureSpec)
+        inflatedView.layout(0,0,inflatedView.measuredWidth, inflatedView.measuredHeight)
+        val requestOptions = RequestOptions().diskCacheStrategy(DiskCacheStrategy.ALL).override(100,100)
+        GlideApp.with(this).load(image).apply(requestOptions)
+            .apply(RequestOptions.circleCropTransform())
+            .into(imagePet)
+
+        var bitmap = Bitmap.createBitmap(inflatedView.measuredWidth, inflatedView.measuredHeight, Bitmap.Config.ARGB_8888)
+        var canvas = Canvas(bitmap)
+
+        inflatedView.draw(canvas)
+        return bitmap
+    }
+
     private fun getReportFromApi() {
         GlobalScope.launch(Dispatchers.Main) {
             try {
@@ -72,6 +105,19 @@ class LocationFragment : Fragment(), OnMapReadyCallback, PermissionsListener, On
                     val reportList: List<Report>? = webResponse.body()!!.data
                     Log.d(tag, reportList!!.toString())
                     list = reportList
+                    var options = ArrayList<MarkerOptions>()
+                    for (report in list) {
+                        //addMarkers(report,loadedMapStyle = mapboxMap.style!!)
+                        //ading custom view to marker layout
+                        var iconFactory = IconFactory.getInstance(context!!)
+                        var icon = iconFactory.fromBitmap(imageFromView(report.pet!!.image!!))
+                        options.add(
+                            MarkerOptions().position(LatLng(report.latitude!!,
+                            report.longitude!!))
+                            .icon(icon))
+                        //mapboxMap.addMarker(MarkerOptions().position(LatLng(report.latitude!!,report.longitude!!)))
+                    }
+                    mapboxMap.addMarkers(options)
                 } else {
                     Log.e(tag, "Error ${webResponse.code()}")
                     Toast.makeText(activity!!.applicationContext, "Error ${webResponse.code()}", Toast.LENGTH_SHORT).show()

@@ -6,6 +6,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.RequestOptions
 import com.shibuyaxpress.petchaserkt.R
 import com.shibuyaxpress.petchaserkt.models.Report
@@ -27,7 +28,8 @@ class ReportHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
     fun bind(report: Report?, clickListener: OnItemClickListener ) {
         name!!.text = report!!.pet!!.name
         address!!.text = report.location
-        GlideApp.with(itemView).load(report.pet!!.image)
+        val requestOptions = RequestOptions().diskCacheStrategy(DiskCacheStrategy.ALL)
+        GlideApp.with(itemView).load(report.pet!!.image).apply(requestOptions)
             .apply(RequestOptions.circleCropTransform()).into(image!!)
         card!!.setOnClickListener {
             Log.d("AMTENT","DDDDD")
