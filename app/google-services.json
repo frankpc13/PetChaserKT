@@ -1,0 +1,56 @@
+{
+  "project_info": {
+    "project_number": "156884081452",
+    "firebase_url": "https://petchaser-d6f3d.firebaseio.com",
+    "project_id": "petchaser-d6f3d",
+    "storage_bucket": "petchaser-d6f3d.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:156884081452:android:69f4c0e746e51dcab6ea89",
+        "android_client_info": {
+          "package_name": "com.shibuyaxpress.petchaserkt"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "156884081452-sqfijdpl7cig7churs7ghj35k3v32lm6.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.shibuyaxpress.petchaserkt",
+            "certificate_hash": "f6c16af161f70f4675a3ebf3e6c3a0ca7525fc10"
+          }
+        },
+        {
+          "client_id": "156884081452-ptbslkc6iurevcajvc7ris6t7j6ehq9t.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.shibuyaxpress.petchaserkt",
+            "certificate_hash": "04c7d91449826c3ef81c3176fbc0529a68a12133"
+          }
+        },
+        {
+          "client_id": "156884081452-h8np9359oq9rjr2mu1en5qtiov2e4roe.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDYuPezuAxn-fdBw9suqUxMGL7E8OeE9Cs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "156884081452-h8np9359oq9rjr2mu1en5qtiov2e4roe.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
