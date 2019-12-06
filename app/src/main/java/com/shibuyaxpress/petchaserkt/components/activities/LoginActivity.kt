@@ -102,13 +102,14 @@ class LoginActivity : AppCompatActivity() {
         if (account == null) {
 
             val currentUser = auth.currentUser
+            Log.d(TAG,auth.currentUser.toString())
             if (currentUser == null) {
                 Toast.makeText(this, "F", Toast.LENGTH_SHORT).show()
             } else {
                 updateUI()
             }
         }else {
-            updateUI()
+            Toast.makeText(this, "A donde vas bandido",Toast.LENGTH_SHORT).show()
         }
 
     }
@@ -144,7 +145,6 @@ class LoginActivity : AppCompatActivity() {
         super.onActivityResult(requestCode, resultCode, data)
         // Pass the activity result back to the Facebook SDK
         callbackManager.onActivityResult(requestCode, resultCode, data)
-
         // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
         if (requestCode == RC_SIGN_IN) {
             val task = GoogleSignIn.getSignedInAccountFromIntent(data)

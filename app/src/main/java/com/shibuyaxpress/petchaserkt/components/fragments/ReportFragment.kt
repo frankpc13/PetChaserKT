@@ -84,6 +84,7 @@ class ReportFragment : Fragment(), OnItemClickListener {
             }
         }
     }
+
     companion object {
         fun newInstance():ReportFragment = ReportFragment()
     }

@@ -2,6 +2,7 @@ package com.shibuyaxpress.petchaserkt.components.fragments
 
 import android.annotation.SuppressLint
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,6 +11,9 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.mapbox.android.core.permissions.PermissionsListener
 import com.mapbox.android.core.permissions.PermissionsManager
+import com.mapbox.geojson.Feature
+import com.mapbox.geojson.FeatureCollection
+import com.mapbox.geojson.Point
 import com.mapbox.mapboxsdk.Mapbox
 import com.mapbox.mapboxsdk.camera.CameraPosition
 import com.mapbox.mapboxsdk.location.LocationComponentActivationOptions
@@ -21,8 +25,16 @@ import com.mapbox.mapboxsdk.maps.MapView
 import com.mapbox.mapboxsdk.maps.MapboxMap
 import com.mapbox.mapboxsdk.maps.OnMapReadyCallback
 import com.mapbox.mapboxsdk.maps.Style
+import com.mapbox.mapboxsdk.style.layers.PropertyFactory
+import com.mapbox.mapboxsdk.style.layers.SymbolLayer
+import com.mapbox.mapboxsdk.style.sources.GeoJsonSource
 import com.shibuyaxpress.petchaserkt.R
+import com.shibuyaxpress.petchaserkt.models.Report
+import com.shibuyaxpress.petchaserkt.network.APIServiceGenerator
 import kotlinx.android.synthetic.main.fragment_chaser.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 
 class LocationFragment : Fragment(), OnMapReadyCallback, PermissionsListener, OnCameraTrackingChangedListener {
 
@@ -30,6 +42,10 @@ class LocationFragment : Fragment(), OnMapReadyCallback, PermissionsListener, On
     private lateinit var mapViewChaser: MapView
     private lateinit var mapboxMap: MapboxMap
     private var isInTrackingMode: Boolean = false
+    private val MARKER_SOURCE = "markers-source"
+    private val MARKER_STYLE_LAYER = "markers-style-layer"
+    private val MARKER_IMAGE = "custom-marker"
+    private lateinit var list: List<Report>
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
@@ -46,6 +62,43 @@ class LocationFragment : Fragment(), OnMapReadyCallback, PermissionsListener, On
         mapboxMap.setStyle(Style.MAPBOX_STREETS){
             enableLocationComponent(it)
         }
+    }
+
+    private fun getReportFromApi() {
+        GlobalScope.launch(Dispatchers.Main) {
+            try {
+                val webResponse = APIServiceGenerator.petchaserClient.getReportsAsync().await()
+                if (webResponse.isSuccessful) {
+                    val reportList: List<Report>? = webResponse.body()!!.data
+                    Log.d(tag, reportList!!.toString())
+                    list = reportList
+                } else {
+                    Log.e(tag, "Error ${webResponse.code()}")
+                    Toast.makeText(activity!!.applicationContext, "Error ${webResponse.code()}", Toast.LENGTH_SHORT).show()
+                }
+            } catch (e: Exception) {
+                Log.e(tag, "Exception"+e.printStackTrace())
+                Toast.makeText(activity!!.applicationContext, "Error ${e.message}", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+    private fun addMarkers(report: Report?, loadedMapStyle:Style) {
+        val featureList:ArrayList<Feature> = ArrayList()
+        featureList
+            .add(Feature.fromGeometry(Point.fromLngLat(report?.longitude!!,report.latitude!!)))
+        loadedMapStyle
+            .addSource(GeoJsonSource(MARKER_SOURCE, FeatureCollection.fromFeatures(featureList)))
+
+        loadedMapStyle.addLayer(
+            SymbolLayer(MARKER_STYLE_LAYER, MARKER_SOURCE)
+                .withProperties(
+                    PropertyFactory.circleRadius(25f),
+                    PropertyFactory.iconAllowOverlap(true),
+                    PropertyFactory.iconIgnorePlacement(true),
+                    PropertyFactory.iconImage(MARKER_IMAGE),
+                    PropertyFactory.iconOffset(arrayOf(0f, -52f))
+                ))
     }
 
     @SuppressLint("MissingPermission")
@@ -117,6 +170,7 @@ class LocationFragment : Fragment(), OnMapReadyCallback, PermissionsListener, On
         mapViewChaser = itemView.findViewById(R.id.mapViewChaser)
         mapViewChaser.onCreate(savedInstanceState)
         mapViewChaser.getMapAsync(this)
+        getReportFromApi()
         return itemView
     }
 
