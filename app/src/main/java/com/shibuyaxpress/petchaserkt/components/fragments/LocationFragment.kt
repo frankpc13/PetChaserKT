@@ -16,6 +16,7 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.Target
@@ -79,22 +80,65 @@ class LocationFragment : Fragment(), OnMapReadyCallback, PermissionsListener, On
         }
     }
 
-    private fun imageFromView(image: String) : Bitmap {
-        var inflatedView = layoutInflater.inflate(R.layout.marker_pet_report, null)
-        var imagePet = inflatedView.findViewById<ImageView>(R.id.imageMarkerPet)
-        val measureSpec  = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED)
-        inflatedView.measure(measureSpec, measureSpec)
-        inflatedView.layout(0,0,inflatedView.measuredWidth, inflatedView.measuredHeight)
-        val requestOptions = RequestOptions().diskCacheStrategy(DiskCacheStrategy.ALL).override(100,100)
-        GlideApp.with(this).load(image).apply(requestOptions)
-            .apply(RequestOptions.circleCropTransform())
-            .into(imagePet)
+    private fun imageFromView(list: List<Report>) {
+        var options = ArrayList<MarkerOptions>()
+        for (item in list) {
+            var inflatedView = layoutInflater.inflate(R.layout.marker_pet_report, null)
+            var imagePet = inflatedView.findViewById<ImageView>(R.id.imageMarkerPet)
+            inflatedView.isDrawingCacheEnabled = true
+            val measureSpec = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED)
+            inflatedView.measure(measureSpec, measureSpec)
+            inflatedView.layout(0, 0, inflatedView.measuredWidth, inflatedView.measuredHeight)
+            inflatedView.buildDrawingCache(true)
+            val requestOptions =
+                RequestOptions().diskCacheStrategy(DiskCacheStrategy.ALL).override(100, 100)
+            GlideApp.with(this).load(item.pet!!.image)
+                .apply(RequestOptions.circleCropTransform())
+                .listener(object : RequestListener<Drawable> {
+                    override fun onLoadFailed(
+                        e: GlideException?,
+                        model: Any?,
+                        target: Target<Drawable>?,
+                        isFirstResource: Boolean
+                    ): Boolean {
+                        Toast.makeText(context!!,"no carga el recurso", Toast.LENGTH_SHORT).show()
+                        Log.e("Location Fragment","${e!!.message}")
+                        return true
+                    }
 
-        var bitmap = Bitmap.createBitmap(inflatedView.measuredWidth, inflatedView.measuredHeight, Bitmap.Config.ARGB_8888)
-        var canvas = Canvas(bitmap)
+                    override fun onResourceReady(
+                        resource: Drawable?,
+                        model: Any?,
+                        target: Target<Drawable>?,
+                        dataSource: DataSource?,
+                        isFirstResource: Boolean
+                    ): Boolean {
+                        imagePet.setImageDrawable(resource)
+                        var bitmap = Bitmap.createBitmap(
+                            inflatedView.measuredWidth,
+                            inflatedView.measuredHeight,
+                            Bitmap.Config.ARGB_8888
+                        )
+                        var canvas = Canvas(bitmap)
 
-        inflatedView.draw(canvas)
-        return bitmap
+                        inflatedView.draw(canvas)
+
+                        var iconFactory = IconFactory.getInstance(context!!)
+                        var icon = iconFactory.fromBitmap(bitmap)
+                       //inflatedView.draw(canvas)
+                        options.add(MarkerOptions().position(
+                            LatLng(
+                                item.latitude!!,
+                                item.longitude!!
+                            )
+                        ).icon(icon))
+                        return true
+                    }
+
+                })
+                .into(imagePet)
+        }
+        mapboxMap.addMarkers(options)
     }
 
     private fun getReportFromApi() {
@@ -105,9 +149,8 @@ class LocationFragment : Fragment(), OnMapReadyCallback, PermissionsListener, On
                     val reportList: List<Report>? = webResponse.body()!!.data
                     Log.d(tag, reportList!!.toString())
                     list = reportList
-                    var options = ArrayList<MarkerOptions>()
+                    /*var options = ArrayList<MarkerOptions>()
                     for (report in list) {
-                        //addMarkers(report,loadedMapStyle = mapboxMap.style!!)
                         //ading custom view to marker layout
                         var iconFactory = IconFactory.getInstance(context!!)
                         var icon = iconFactory.fromBitmap(imageFromView(report.pet!!.image!!))
@@ -115,9 +158,9 @@ class LocationFragment : Fragment(), OnMapReadyCallback, PermissionsListener, On
                             MarkerOptions().position(LatLng(report.latitude!!,
                             report.longitude!!))
                             .icon(icon))
-                        //mapboxMap.addMarker(MarkerOptions().position(LatLng(report.latitude!!,report.longitude!!)))
-                    }
-                    mapboxMap.addMarkers(options)
+                    }*/
+                    //mapboxMap.addMarkers(options)
+                    imageFromView(list)
                 } else {
                     Log.e(tag, "Error ${webResponse.code()}")
                     Toast.makeText(activity!!.applicationContext, "Error ${webResponse.code()}", Toast.LENGTH_SHORT).show()
