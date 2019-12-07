@@ -8,7 +8,7 @@ import retrofit2.http.POST
 interface PetChaserAPI {
 
     companion object {
-        val API_BASE_URL = "http://3.132.117.167:3000/api/v1/"
+        const val API_BASE_URL = "http://3.132.117.167:3000/api/v1/"
     }
 
 
