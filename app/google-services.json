@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "156884081452-jcjpdfuusehmpr7kfkbqj8tr1et2jcjt.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.shibuyaxpress.petchaserkt",
+            "certificate_hash": "854e4e81ae6f37ab030e412f12db8931fe6a4eee"
+          }
+        },
+        {
           "client_id": "156884081452-sqfijdpl7cig7churs7ghj35k3v32lm6.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {

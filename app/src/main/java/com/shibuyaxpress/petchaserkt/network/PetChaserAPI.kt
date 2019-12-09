@@ -20,4 +20,7 @@ interface PetChaserAPI {
 
     @POST("login")
     fun LoginUserAsync() : Deferred<Response<DataResponseLogin>>
+
+    @POST("check/user")
+    fun checkUserEmailAsync(email:String) : Deferred<Response<DataResponseEmailChecker>>
 }

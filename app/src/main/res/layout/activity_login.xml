@@ -87,4 +87,24 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/btnFacebookLogin" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/registerButton"
+        style="@style/Widget.AppCompat.Button.Colored"
+        android:layout_width="0dp"
+        android:layout_height="64dp"
+        android:layout_marginStart="49dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="49dp"
+        android:backgroundTint="#26A69A"
+        android:elevation="2dp"
+        android:text="Registrar con correo"
+        android:textColor="#FFFFFF"
+        app:cornerRadius="8dp"
+        app:icon="@drawable/ic_email_black_24dp"
+        app:iconPadding="8dp"
+        app:iconTint="#FFFFFF"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btnGoogleLogin" />
 </androidx.constraintlayout.widget.ConstraintLayout>

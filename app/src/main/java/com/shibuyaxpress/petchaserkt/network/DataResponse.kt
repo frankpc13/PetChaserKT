@@ -38,3 +38,13 @@ data class DataResponseLogin(
     @field:Json(name = "statusCode")
     var statusCode: Int
 )
+
+@JsonClass(generateAdapter = true)
+data class DataResponseEmailChecker(
+    @field:Json(name = "message")
+    var message: String,
+    @field:Json(name = "data")
+    var data: String,
+    @field:Json(name = "statusCode")
+    var statusCode: Int
+)

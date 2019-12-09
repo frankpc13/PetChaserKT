@@ -18,6 +18,7 @@ import com.shibuyaxpress.petchaserkt.R
 import kotlinx.android.synthetic.main.activity_login.*
 import com.facebook.login.LoginResult
 import com.google.firebase.auth.FacebookAuthProvider
+import com.shibuyaxpress.petchaserkt.RegisterActivity
 
 
 class LoginActivity : AppCompatActivity() {
@@ -36,6 +37,10 @@ class LoginActivity : AppCompatActivity() {
         auth = FirebaseAuth.getInstance()
         //FacebookSdk.sdkInitialize(applicationContext)
         //AppEventsLogger.activateApp(applicationContext)
+
+        registerButton.setOnClickListener {
+            startActivity(Intent(this@LoginActivity, RegisterActivity::class.java))
+        }
         btnFacebookLogin.setReadPermissions(listOf(EMAIL))
         btnGoogleLogin.setOnClickListener {
             signIn()
