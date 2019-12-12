@@ -43,11 +43,11 @@ class MenuActivity : AppCompatActivity() {
         //NavigationUI.setupActionBarWithNavController(this,navController)
     }
 
-    override fun onSupportNavigateUp(): Boolean {
+   /* override fun onSupportNavigateUp(): Boolean {
         return NavigationUI.navigateUp(navController, null)
     }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+*/
+    /*override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when(item.itemId) {
             android.R.id.home-> {
                 supportFinishAfterTransition()
@@ -55,7 +55,7 @@ class MenuActivity : AppCompatActivity() {
             }
         }
         return super.onOptionsItemSelected(item)
-    }
+    }*/
 
     private val navigationItemSelectedListener = BottomNavigationView.OnNavigationItemSelectedListener {
         item ->

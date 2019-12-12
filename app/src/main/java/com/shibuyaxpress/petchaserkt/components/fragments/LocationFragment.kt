@@ -1,9 +1,6 @@
 package com.shibuyaxpress.petchaserkt.components.fragments
 
 import android.annotation.SuppressLint
-import android.graphics.Bitmap
-import android.graphics.Canvas
-import android.graphics.Color
 import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.util.Log
@@ -39,10 +36,10 @@ import com.mapbox.mapboxsdk.maps.MapView
 import com.mapbox.mapboxsdk.maps.MapboxMap
 import com.mapbox.mapboxsdk.maps.OnMapReadyCallback
 import com.mapbox.mapboxsdk.maps.Style
-import com.mapbox.mapboxsdk.plugins.annotation.SymbolOptions
 import com.mapbox.mapboxsdk.style.layers.PropertyFactory
 import com.mapbox.mapboxsdk.style.layers.SymbolLayer
 import com.mapbox.mapboxsdk.style.sources.GeoJsonSource
+import com.pranavpandey.android.dynamic.utils.DynamicBitmapUtils
 import com.shibuyaxpress.petchaserkt.R
 import com.shibuyaxpress.petchaserkt.models.Report
 import com.shibuyaxpress.petchaserkt.modules.GlideApp
@@ -52,15 +49,18 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
+private const val MARKER_SOURCE = "markers-source"
+private const val MARKER_STYLE_LAYER = "markers-style-layer"
+private const val MARKER_IMAGE = "custom-marker"
+
 class LocationFragment : Fragment(), OnMapReadyCallback, PermissionsListener, OnCameraTrackingChangedListener {
 
     private var permissionManager = PermissionsManager(this)
     private lateinit var mapViewChaser: MapView
-    private lateinit var mapboxMap: MapboxMap
+    private lateinit var mapBoxMapView: MapboxMap
     private var isInTrackingMode: Boolean = false
-    private val MARKER_SOURCE = "markers-source"
-    private val MARKER_STYLE_LAYER = "markers-style-layer"
-    private val MARKER_IMAGE = "custom-marker"
+
+
     private lateinit var list: List<Report>
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -70,7 +70,7 @@ class LocationFragment : Fragment(), OnMapReadyCallback, PermissionsListener, On
     }
 
     override fun onMapReady(mapboxMap: MapboxMap) {
-        this.mapboxMap = mapboxMap
+        this.mapBoxMapView = mapboxMap
         mapboxMap.cameraPosition = CameraPosition
             .Builder()
             .zoom(15.00)
@@ -80,19 +80,19 @@ class LocationFragment : Fragment(), OnMapReadyCallback, PermissionsListener, On
         }
     }
 
-    private fun imageFromView(list: List<Report>) {
-        var options = ArrayList<MarkerOptions>()
+    private fun setCustomMarkersOnMap(list: List<Report>) {
+        val options = ArrayList<MarkerOptions>()
         for (item in list) {
-            var inflatedView = layoutInflater.inflate(R.layout.marker_pet_report, null)
-            var imagePet = inflatedView.findViewById<ImageView>(R.id.imageMarkerPet)
-            inflatedView.isDrawingCacheEnabled = true
+            val inflatedView = layoutInflater.inflate(R.layout.marker_pet_report, null)
+            val imagePet = inflatedView.findViewById<ImageView>(R.id.imageMarkerPet)
+            //inflatedView.isDrawingCacheEnabled = true
             val measureSpec = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED)
             inflatedView.measure(measureSpec, measureSpec)
             inflatedView.layout(0, 0, inflatedView.measuredWidth, inflatedView.measuredHeight)
-            inflatedView.buildDrawingCache(true)
+            //inflatedView.buildDrawingCache(true)
             val requestOptions =
                 RequestOptions().diskCacheStrategy(DiskCacheStrategy.ALL).override(100, 100)
-            GlideApp.with(this).load(item.pet!!.image)
+            GlideApp.with(context!!.applicationContext).load(item.pet!!.image)
                 .apply(RequestOptions.circleCropTransform())
                 .listener(object : RequestListener<Drawable> {
                     override fun onLoadFailed(
@@ -103,7 +103,7 @@ class LocationFragment : Fragment(), OnMapReadyCallback, PermissionsListener, On
                     ): Boolean {
                         Toast.makeText(context!!,"no carga el recurso", Toast.LENGTH_SHORT).show()
                         Log.e("Location Fragment","${e!!.message}")
-                        return true
+                        return false
                     }
 
                     override fun onResourceReady(
@@ -113,32 +113,24 @@ class LocationFragment : Fragment(), OnMapReadyCallback, PermissionsListener, On
                         dataSource: DataSource?,
                         isFirstResource: Boolean
                     ): Boolean {
+                        Toast.makeText(context!!, "the image was downloaded", Toast.LENGTH_SHORT).show()
                         imagePet.setImageDrawable(resource)
-                        var bitmap = Bitmap.createBitmap(
-                            inflatedView.measuredWidth,
-                            inflatedView.measuredHeight,
-                            Bitmap.Config.ARGB_8888
-                        )
-                        var canvas = Canvas(bitmap)
-
-                        inflatedView.draw(canvas)
-
-                        var iconFactory = IconFactory.getInstance(context!!)
-                        var icon = iconFactory.fromBitmap(bitmap)
-                       //inflatedView.draw(canvas)
+                        val imageBitmap = DynamicBitmapUtils.createBitmapFromView(inflatedView)
+                        val iconFactory = IconFactory.getInstance(context!!)
+                        val icon = iconFactory.fromBitmap(imageBitmap)
                         options.add(MarkerOptions().position(
                             LatLng(
                                 item.latitude!!,
                                 item.longitude!!
                             )
                         ).icon(icon))
-                        return true
+                        return false
                     }
 
                 })
                 .into(imagePet)
         }
-        mapboxMap.addMarkers(options)
+        //mapBoxMapView.addMarkers(options)
     }
 
     private fun getReportFromApi() {
@@ -149,18 +141,7 @@ class LocationFragment : Fragment(), OnMapReadyCallback, PermissionsListener, On
                     val reportList: List<Report>? = webResponse.body()!!.data
                     Log.d(tag, reportList!!.toString())
                     list = reportList
-                    /*var options = ArrayList<MarkerOptions>()
-                    for (report in list) {
-                        //ading custom view to marker layout
-                        var iconFactory = IconFactory.getInstance(context!!)
-                        var icon = iconFactory.fromBitmap(imageFromView(report.pet!!.image!!))
-                        options.add(
-                            MarkerOptions().position(LatLng(report.latitude!!,
-                            report.longitude!!))
-                            .icon(icon))
-                    }*/
-                    //mapboxMap.addMarkers(options)
-                    imageFromView(list)
+                    setCustomMarkersOnMap(list)
                 } else {
                     Log.e(tag, "Error ${webResponse.code()}")
                     Toast.makeText(activity!!.applicationContext, "Error ${webResponse.code()}", Toast.LENGTH_SHORT).show()
@@ -202,7 +183,7 @@ class LocationFragment : Fragment(), OnMapReadyCallback, PermissionsListener, On
                 .locationComponentOptions(customLocationComponentOptions)
                 .build()
 
-            mapboxMap.locationComponent.apply {
+            mapBoxMapView.locationComponent.apply {
 
                 activateLocationComponent(locationComponentActivationOptions)
 
@@ -214,8 +195,8 @@ class LocationFragment : Fragment(), OnMapReadyCallback, PermissionsListener, On
             back_to_camera_tracking_mode.setOnClickListener {
                 if (!isInTrackingMode) {
                     isInTrackingMode = true
-                    mapboxMap.locationComponent.cameraMode = CameraMode.TRACKING
-                    mapboxMap.locationComponent.zoomWhileTracking(16.0)
+                    mapBoxMapView.locationComponent.cameraMode = CameraMode.TRACKING
+                    mapBoxMapView.locationComponent.zoomWhileTracking(16.0)
                     Toast.makeText(activity,"Se activo el tracking", Toast.LENGTH_SHORT).show()
                 } else {
                     Toast.makeText(activity, "El tracking ya esta activado", Toast.LENGTH_SHORT).show()
@@ -241,7 +222,8 @@ class LocationFragment : Fragment(), OnMapReadyCallback, PermissionsListener, On
 
     override fun onPermissionResult(granted: Boolean) {
         if (granted) {
-            enableLocationComponent(mapboxMap.style!!)
+            enableLocationComponent(mapBoxMapView.style!!)
+            isInTrackingMode = true
         } else {
             Toast.makeText(context, "no se concedio los permisos", Toast.LENGTH_SHORT).show()
             activity!!.finish()
@@ -253,7 +235,6 @@ class LocationFragment : Fragment(), OnMapReadyCallback, PermissionsListener, On
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        /*return super.onCreateView(inflater, container, savedInstanceState)*/
         Mapbox.getInstance(context!!.applicationContext,getString(R.string.map_box_key))
         val itemView = inflater.inflate(R.layout.fragment_chaser, container, false)
         mapViewChaser = itemView.findViewById(R.id.mapViewChaser)

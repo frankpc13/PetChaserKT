@@ -53,6 +53,7 @@ dependencies {
     implementation 'com.github.bumptech.glide:glide:4.9.0'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.9.0'
     kapt 'com.github.bumptech.glide:compiler:4.9.0'
+    //android cardview implementation
     implementation 'androidx.cardview:cardview:1.0.0'
     //misc.
     implementation 'com.synnapps:carouselview:0.1.5'
@@ -70,6 +71,8 @@ dependencies {
     implementation 'androidx.navigation:navigation-ui-ktx:2.1.0'
     //FaceBOOK SDK
     implementation 'com.facebook.android:facebook-login:[5,6)'
+    // For AndroidX enabled projects.
+    implementation 'com.pranavpandey.android:dynamic-utils:3.0.2'
 
 
 }
