@@ -97,12 +97,12 @@ class ReportDetailActivity : AppCompatActivity(){
                 // create a fixed circle
                 val circleOptions = CircleOptions()
                     .withLatLng( LatLng(report.latitude!!, report.longitude!!))
-                    .withCircleColor(ColorUtils.colorToRgbaString(Color.BLUE))
+                    .withCircleColor(ColorUtils.colorToRgbaString(Color.CYAN))
                     .withCircleRadius(250f)
-                    .withCircleOpacity(0.35f)
+                    .withCircleOpacity(0.25f)
                     .withDraggable(false)
                     .withCircleStrokeColor(ColorUtils.colorToRgbaString(Color.WHITE))
-                //circleManager.create(circleOptions)
+                circleManager.create(circleOptions)
                 //here we add the marker to the coordinates of the report
                 it.addMarker(MarkerOptions().position(LatLng(report.latitude!!,report.longitude!!)).title("ME PERDI"))
                 style

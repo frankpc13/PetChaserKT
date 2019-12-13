@@ -10,6 +10,8 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.firebase.auth.FirebaseAuth
 import com.shibuyaxpress.petchaserkt.R
+import com.shibuyaxpress.petchaserkt.modules.GlideApp
+import com.shibuyaxpress.petchaserkt.utils.UserPreferences
 import kotlinx.android.synthetic.main.activity_profile.*
 
 class ProfileActivity : AppCompatActivity() {
@@ -35,5 +37,12 @@ class ProfileActivity : AppCompatActivity() {
             startActivity(Intent(this@ProfileActivity, LoginActivity::class.java))
 
         }
+        updateWithUserInfo()
+    }
+
+    private fun updateWithUserInfo() {
+        val user = UserPreferences.currentUserLogged
+        GlideApp.with(this).load(user!!.image).into(profile_image)
+        textUserName.text = user.person!!.name
     }
 }

@@ -1,6 +1,7 @@
 package com.shibuyaxpress.petchaserkt.components.fragments
 
 import android.annotation.SuppressLint
+import android.graphics.Color
 import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.util.Log
@@ -36,9 +37,12 @@ import com.mapbox.mapboxsdk.maps.MapView
 import com.mapbox.mapboxsdk.maps.MapboxMap
 import com.mapbox.mapboxsdk.maps.OnMapReadyCallback
 import com.mapbox.mapboxsdk.maps.Style
+import com.mapbox.mapboxsdk.plugins.annotation.CircleManager
+import com.mapbox.mapboxsdk.plugins.annotation.CircleOptions
 import com.mapbox.mapboxsdk.style.layers.PropertyFactory
 import com.mapbox.mapboxsdk.style.layers.SymbolLayer
 import com.mapbox.mapboxsdk.style.sources.GeoJsonSource
+import com.mapbox.mapboxsdk.utils.ColorUtils
 import com.pranavpandey.android.dynamic.utils.DynamicBitmapUtils
 import com.shibuyaxpress.petchaserkt.R
 import com.shibuyaxpress.petchaserkt.models.Report
@@ -59,6 +63,7 @@ class LocationFragment : Fragment(), OnMapReadyCallback, PermissionsListener, On
     private lateinit var mapViewChaser: MapView
     private lateinit var mapBoxMapView: MapboxMap
     private var isInTrackingMode: Boolean = false
+    private lateinit var maboxmarkersoptions:ArrayList<MarkerOptions>
 
 
     private lateinit var list: List<Report>
@@ -80,7 +85,7 @@ class LocationFragment : Fragment(), OnMapReadyCallback, PermissionsListener, On
         }
     }
 
-    private fun setCustomMarkersOnMap(list: List<Report>) {
+    private fun setCustomMarkersOnMap(list: List<Report>) : ArrayList<MarkerOptions> {
         val options = ArrayList<MarkerOptions>()
         for (item in list) {
             val inflatedView = layoutInflater.inflate(R.layout.marker_pet_report, null)
@@ -91,9 +96,9 @@ class LocationFragment : Fragment(), OnMapReadyCallback, PermissionsListener, On
             inflatedView.layout(0, 0, inflatedView.measuredWidth, inflatedView.measuredHeight)
             //inflatedView.buildDrawingCache(true)
             val requestOptions =
-                RequestOptions().diskCacheStrategy(DiskCacheStrategy.ALL).override(100, 100)
+                RequestOptions().diskCacheStrategy(DiskCacheStrategy.ALL).override(100, 100).circleCrop()
             GlideApp.with(context!!.applicationContext).load(item.pet!!.image)
-                .apply(RequestOptions.circleCropTransform())
+                .apply(requestOptions)
                 .listener(object : RequestListener<Drawable> {
                     override fun onLoadFailed(
                         e: GlideException?,
@@ -118,19 +123,32 @@ class LocationFragment : Fragment(), OnMapReadyCallback, PermissionsListener, On
                         val imageBitmap = DynamicBitmapUtils.createBitmapFromView(inflatedView)
                         val iconFactory = IconFactory.getInstance(context!!)
                         val icon = iconFactory.fromBitmap(imageBitmap)
+                        /**/
+                        val circleManager = CircleManager(mapViewChaser, mapBoxMapView, mapBoxMapView.style!!)
+                        // create a fixed circle
+                        val circleOptions = CircleOptions()
+                            .withLatLng( LatLng(item.latitude!!, item.longitude!!))
+                            .withCircleColor(ColorUtils.colorToRgbaString(Color.BLUE))
+                            .withCircleRadius(250f)
+                            .withCircleOpacity(0.35f)
+                            .withDraggable(false)
+                            .withCircleStrokeColor(ColorUtils.colorToRgbaString(Color.WHITE))
+                        circleManager.create(circleOptions)
+                        /**/
                         options.add(MarkerOptions().position(
                             LatLng(
                                 item.latitude!!,
                                 item.longitude!!
                             )
                         ).icon(icon))
+                        mapBoxMapView.addMarkers(options)
                         return false
                     }
 
                 })
                 .into(imagePet)
         }
-        //mapBoxMapView.addMarkers(options)
+        return options
     }
 
     private fun getReportFromApi() {
@@ -141,7 +159,8 @@ class LocationFragment : Fragment(), OnMapReadyCallback, PermissionsListener, On
                     val reportList: List<Report>? = webResponse.body()!!.data
                     Log.d(tag, reportList!!.toString())
                     list = reportList
-                    setCustomMarkersOnMap(list)
+                    maboxmarkersoptions = setCustomMarkersOnMap(list)
+                    //mapBoxMapView.addMarkers(maboxmarkersoptions)
                 } else {
                     Log.e(tag, "Error ${webResponse.code()}")
                     Toast.makeText(activity!!.applicationContext, "Error ${webResponse.code()}", Toast.LENGTH_SHORT).show()
@@ -149,6 +168,10 @@ class LocationFragment : Fragment(), OnMapReadyCallback, PermissionsListener, On
             } catch (e: Exception) {
                 Log.e(tag, "Exception"+e.printStackTrace())
                 Toast.makeText(activity!!.applicationContext, "Error ${e.message}", Toast.LENGTH_SHORT).show()
+            }
+            launch(Dispatchers.Main) {
+                Toast.makeText(context!!.applicationContext, "ya voy a setear los datos",Toast.LENGTH_SHORT).show()
+                mapBoxMapView.addMarkers(maboxmarkersoptions)
             }
         }
     }

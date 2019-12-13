@@ -44,7 +44,7 @@ data class DataResponseEmailChecker(
     @field:Json(name = "message")
     var message: String,
     @field:Json(name = "data")
-    var data: String,
+    var data: User,
     @field:Json(name = "statusCode")
     var statusCode: Int
 )

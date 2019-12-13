@@ -14,18 +14,22 @@ import com.shibuyaxpress.petchaserkt.components.fragments.HomeFragment
 import com.shibuyaxpress.petchaserkt.components.fragments.LocationFragment
 import com.shibuyaxpress.petchaserkt.components.fragments.ReportFragment
 import com.shibuyaxpress.petchaserkt.components.fragments.RewardFragment
+import com.shibuyaxpress.petchaserkt.modules.GlideApp
+import com.shibuyaxpress.petchaserkt.utils.UserPreferences
+import de.hdodenhof.circleimageview.CircleImageView
 import kotlinx.android.synthetic.main.activity_menu.*
 
 class MenuActivity : AppCompatActivity() {
 
     private lateinit var toolbar: Toolbar
     private lateinit var navController:NavController
-
+    private lateinit var imageProfile: CircleImageView
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_menu)
         toolbar  = findViewById(R.id.toolbar)
         val bottomNavigationBar: BottomNavigationView = findViewById(R.id.navigation)
+        imageProfile = findViewById(R.id.imageProfile)
         bottomNavigationBar.setOnNavigationItemSelectedListener(navigationItemSelectedListener)
         openFragment(HomeFragment.newInstance())
         textBar.text = "Inicio"
@@ -33,6 +37,7 @@ class MenuActivity : AppCompatActivity() {
         imageProfile.setOnClickListener {
             startActivity(Intent(this@MenuActivity, ProfileActivity::class.java))
         }
+        setUserData()
 
         //navigation style
         //getting the navigation controller
@@ -56,6 +61,10 @@ class MenuActivity : AppCompatActivity() {
         }
         return super.onOptionsItemSelected(item)
     }*/
+
+    private fun setUserData() {
+            GlideApp.with(this).load(UserPreferences.currentUserLogged!!.image).into(imageProfile)
+    }
 
     private val navigationItemSelectedListener = BottomNavigationView.OnNavigationItemSelectedListener {
         item ->

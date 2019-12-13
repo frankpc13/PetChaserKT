@@ -18,7 +18,14 @@ import com.shibuyaxpress.petchaserkt.R
 import kotlinx.android.synthetic.main.activity_login.*
 import com.facebook.login.LoginResult
 import com.google.firebase.auth.FacebookAuthProvider
+import com.google.gson.JsonObject
 import com.shibuyaxpress.petchaserkt.RegisterActivity
+import com.shibuyaxpress.petchaserkt.models.User
+import com.shibuyaxpress.petchaserkt.network.APIServiceGenerator
+import com.shibuyaxpress.petchaserkt.utils.UserPreferences
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 
 
 class LoginActivity : AppCompatActivity() {
@@ -29,6 +36,32 @@ class LoginActivity : AppCompatActivity() {
     private lateinit var callbackManager: CallbackManager
     private val EMAIL = "email"
     private val TAG = "LoginActivity"
+
+
+    private fun checkEmailFromAPI(email: String) {
+        GlobalScope.launch(Dispatchers.Main) {
+            try {
+                val jsonOb = User()
+                jsonOb.username = email
+                val webResponse = APIServiceGenerator.petchaserClient.checkUserEmailAsync(jsonOb).await()
+                if (webResponse.isSuccessful) {
+                    Log.d(TAG, webResponse.body()!!.toString())
+                    UserPreferences.currentUserLogged = webResponse.body()!!.data
+                    updateUI()
+                }else {
+                    Log.e(com.shibuyaxpress.petchaserkt.components.fragments.TAG, "error ${webResponse.code()}")
+                    Toast
+                        .makeText(this@LoginActivity,
+                            "Error ${webResponse.errorBody()}",
+                            Toast.LENGTH_SHORT).show()
+                }
+            }catch (e: Exception) {
+                Log.e(com.shibuyaxpress.petchaserkt.components.fragments.TAG, "Exception"+e.printStackTrace())
+                Toast.makeText(this@LoginActivity, "Error ${e.message}",
+                    Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -129,7 +162,8 @@ class LoginActivity : AppCompatActivity() {
                     // Sign in success, update UI with the signed-in user's information
                     Log.d("LoginActivity", "signInWithCredential:success")
                     val user = auth.currentUser
-                    updateUI()
+                    checkEmailFromAPI(user!!.email!!)
+
                 } else {
                     // If sign in fails, display a message to the user.
                     Log.w("LoginActivity", "signInWithCredential:failure", task.exception)

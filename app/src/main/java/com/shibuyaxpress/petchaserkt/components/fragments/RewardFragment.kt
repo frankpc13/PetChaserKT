@@ -1,5 +1,6 @@
 package com.shibuyaxpress.petchaserkt.components.fragments
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -10,6 +11,7 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.shibuyaxpress.petchaserkt.R
+import com.shibuyaxpress.petchaserkt.components.activities.RewardDetailActivity
 import com.shibuyaxpress.petchaserkt.components.recyclerview.OnItemClickListener
 import com.shibuyaxpress.petchaserkt.components.recyclerview.RewardAdapter
 import com.shibuyaxpress.petchaserkt.models.Reward
@@ -45,7 +47,9 @@ class RewardFragment : Fragment(), OnItemClickListener {
     override fun onItemClicked(item: Any) {
         Toast.makeText(activity,"${item as Reward}",Toast.LENGTH_SHORT).show()
         activity.let {
-            //startActivity(Intent(activity,))
+            startActivity(Intent(activity, RewardDetailActivity::class.java).putExtra("rewardSelected",
+                item
+            ))
         }
     }
 
