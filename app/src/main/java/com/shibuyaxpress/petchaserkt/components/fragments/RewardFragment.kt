@@ -18,6 +18,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
+const val TAG = "Reward Fragment"
 class RewardFragment : Fragment(), OnItemClickListener {
 
     private lateinit var adapter: RewardAdapter
@@ -54,18 +55,18 @@ class RewardFragment : Fragment(), OnItemClickListener {
                 val webResponse = APIServiceGenerator.petchaserClient.getRewardsAsync().await()
                 if (webResponse.isSuccessful) {
                     val rewardList = webResponse.body()!!.data
-                    Log.d(tag, rewardList!!.toString())
+                    Log.d(TAG, rewardList!!.toString())
                     adapter.setRewardList(rewardList)
                     adapter.notifyDataSetChanged()
                 } else {
-                    Log.e(tag, "error ${webResponse.code()}")
+                    Log.e(TAG, "error ${webResponse.code()}")
                     Toast
                         .makeText(activity!!.applicationContext,
                             "Error ${webResponse.errorBody()}",
                             Toast.LENGTH_SHORT).show()
                 }
             }catch (e: Exception) {
-                Log.e(tag, "Exception"+e.printStackTrace())
+                Log.e(TAG, "Exception"+e.printStackTrace())
                 Toast.makeText(activity!!.applicationContext, "Error ${e.message}",
                     Toast.LENGTH_SHORT).show()
             }

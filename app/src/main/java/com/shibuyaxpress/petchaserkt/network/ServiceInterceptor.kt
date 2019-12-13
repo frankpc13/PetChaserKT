@@ -15,7 +15,7 @@ class ServiceInterceptor : Interceptor {
 
         if (request.header("No-Authentication") == null) {
             if (!token.isNotEmpty()) {
-                val finalToken = "Bearer "+token
+                val finalToken = "Bearer $token"
                 request =  request.newBuilder()
                     .addHeader("Authorization", finalToken)
                     .build()
